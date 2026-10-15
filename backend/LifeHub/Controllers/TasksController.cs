@@ -93,7 +93,7 @@ namespace LifeHub.Controllers
             task.DueDate = dto.DueDate;
             task.Priority = dto.Priority;
             task.Status = dto.Status;
-            task.CreatedAt = DateTime.UtcNow;
+            
 
             await _context.SaveChangesAsync();
             return NoContent();

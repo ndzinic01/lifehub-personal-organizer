@@ -30,7 +30,8 @@ export class Tasks implements OnInit {
 
   tasks: TaskItem[] = [];
   loading = true;
-  creating = false;
+  saving = false;
+  editingTaskId: number | null = null;
   deletingTaskId: number | null = null;
   errorMessage = '';
 
@@ -58,37 +59,84 @@ export class Tasks implements OnInit {
       },
     });
   }
-
-  createTask(form: NgForm): void {
-    if (form.invalid || this.creating) {
+  saveTask(form: NgForm): void {
+    if(form.invalid || this.saving) {
       return;
     }
 
-    this.creating = true;
+    this.saving = true;
     this.errorMessage = '';
 
-    const taskToCreate: CreateTaskDto = {
+    const taskToSave: CreateTaskDto = {
       ...this.newTask,
       title: this.newTask.title.trim(),
       description: this.newTask.description?.trim() || null,
       dueDate: this.newTask.dueDate || null,
     };
+    if(this.editingTaskId === null){
+      this.taskService.createTask(taskToSave).subscribe({
+        next: (createTask) => {
+          this.tasks = [createTask, ...this.tasks];
+          this.saving = false;
+          this.resetTaskForm(form);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.errorMessage = 'Nije moguće kreirati task. Molim Vas pokušajte ponovo.';
+          this.saving = false;
+          this.cdr.markForCheck();
+        },
+      });
+      return;
+    }
+    const taskId = this.editingTaskId;
 
-    this.taskService.createTask(taskToCreate).subscribe({
-      next: (createdTask) => {
-        this.tasks = [createdTask, ...this.tasks];
-        this.creating = false;
-        this.newTask = this.createEmptyTask();
-        form.resetForm(this.newTask);
+    this.taskService.updateTask(taskId, taskToSave).subscribe({
+      next: () => {
+        this.tasks = this.tasks.map((task) =>
+        task.id === taskId
+          ? {
+          ...task,
+          ...taskToSave,
+          description: taskToSave.description ?? null,
+          }
+          : task,
+          );
+        this.saving = false;
+        this.resetTaskForm(form);
         this.cdr.markForCheck();
       },
       error: () => {
-        this.errorMessage = 'Could not create the task. Please try again.';
-        this.creating = false;
+        this.errorMessage = 'Nije moguće izmijeniti task. Molim Vas pokušajte ponovo.';
+        this.saving = false;
         this.cdr.markForCheck();
       },
     });
   }
+  editTask(task: TaskItem): void{
+    this.editingTaskId = task.id;
+    this.errorMessage = '';
+
+    this.newTask = {
+      title: task.title,
+      description: task.description ?? '',
+      dueDate: task.dueDate?.slice(0,10) ?? null,
+      priority: task.priority,
+      status: task.status,
+    };
+  }
+
+  cancelEdit(form: NgForm): void{
+    this.resetTaskForm(form);
+    this.errorMessage = '';
+  }
+
+  private resetTaskForm(form: NgForm): void{
+    this.editingTaskId = null;
+    this.newTask = this.createEmptyTask();
+    form.resetForm(this.newTask);
+  }
+
 
   getStatusLabel(status: TaskStatus): string {
     switch (status) {

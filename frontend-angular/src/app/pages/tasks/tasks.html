@@ -12,9 +12,9 @@
   </header>
 
   <section class="create-panel">
-    <h2>Add a task</h2>
+    <h2>{{ editingTaskId === null ? 'Add a task' : 'Edit task' }}</h2>
 
-    <form #taskForm="ngForm" (ngSubmit)="createTask(taskForm)">
+    <form #taskForm="ngForm" (ngSubmit)="saveTask(taskForm)">
       <label for="title">Title</label>
       <input
         id="title"
@@ -70,13 +70,30 @@
         </div>
       </div>
 
-      <button
-        class="primary-button"
-        type="submit"
-        [disabled]="taskForm.invalid || creating"
-      >
-        {{ creating ? 'Adding...' : 'Add task' }}
-      </button>
+      <div class="form-buttons">
+        <button
+          class="primary-button"
+          type="submit"
+          [disabled]="taskForm.invalid || saving"
+        >
+          {{
+            saving
+              ? 'Saving...'
+              : editingTaskId === null
+                ? 'Add task'
+                : 'Save changes'
+          }}
+        </button>
+        @if (editingTaskId !== null) {
+          <button
+            class="secondary-button"
+            type="button"
+            (click)="cancelEdit(taskForm)"
+          >
+            Cancel
+          </button>
+        }
+      </div>
     </form>
   </section>
 
@@ -119,7 +136,13 @@
       {{ getPriorityLabel(task.priority) }} priority
     </span>
             </div>
-
+            <button
+              class="edit-button"
+              type="button"
+              (click)="editTask(task)"
+            >
+              Edit
+            </button>
             <button
               class="delete-button"
               type="button"
