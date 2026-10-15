@@ -31,6 +31,7 @@ export class Tasks implements OnInit {
   tasks: TaskItem[] = [];
   loading = true;
   creating = false;
+  deletingTaskId: number | null = null;
   errorMessage = '';
 
   newTask: CreateTaskDto = this.createEmptyTask();
@@ -123,6 +124,31 @@ export class Tasks implements OnInit {
       priority: TaskPriority.Medium,
       status: TaskStatus.Pending,
     };
+  }
+
+  deleteTask(task: TaskItem): void {
+    const confirmed = window.confirm(`Delete "${task.title}"?`);
+
+    if(!confirmed) {
+      return;
+    }
+
+    this.deletingTaskId = task.id;
+    this.errorMessage = '';
+
+    this.taskService.deleteTask(task.id).subscribe({
+      next: () => {
+        this.tasks = this.tasks.filter((item) =>
+        item.id !== task.id);
+        this.deletingTaskId = null;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.errorMessage = 'Nije moguće izbrisati ovaj task. Molim Vas pokušajte opet.';
+        this.deletingTaskId = null;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }
 

@@ -112,11 +112,22 @@
             </p>
           </div>
 
-          <div class="task-labels">
-            <span class="task-label">{{ getStatusLabel(task.status) }}</span>
-            <span class="task-label priority">
-              {{ getPriorityLabel(task.priority) }} priority
-            </span>
+          <div class="task-actions">
+            <div class="task-labels">
+              <span class="task-label">{{ getStatusLabel(task.status) }}</span>
+              <span class="task-label priority">
+      {{ getPriorityLabel(task.priority) }} priority
+    </span>
+            </div>
+
+            <button
+              class="delete-button"
+              type="button"
+              [disabled]="deletingTaskId === task.id"
+              (click)="deleteTask(task)"
+            >
+              {{ deletingTaskId === task.id ? 'Deleting...' : 'Delete' }}
+            </button>
           </div>
         </article>
       }
