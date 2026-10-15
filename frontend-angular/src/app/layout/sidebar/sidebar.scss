@@ -1,0 +1,152 @@
+:host{
+  display: block;
+  height: 100%;
+}
+
+.sidebar{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 28px 18px 20px;
+  box-sizing: border-box;
+  background: #fff;
+  border-right: 1px solid #e8eee9;
+}
+
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px;
+  margin-bottom: 44px;
+  color: #183c2c;
+  text-decoration: none;
+  font-size: 23px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+}
+
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: white;
+  background: #287650;
+  font-size: 22px;
+}
+
+.menu-label {
+  margin: 0 10px 13px;
+  color: #98a59d;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.3px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 13px;
+  border-radius: 10px;
+  color: #68776e;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 550;
+  transition: background 0.2s, color 0.2s;
+}
+
+.menu a:hover {
+  background: #f4f8f5;
+  color: #287650;
+}
+
+.menu a.active {
+  color: #236a46;
+  background: #eaf4ed;
+  font-weight: 700;
+}
+
+.menu-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.sidebar-bottom {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: auto;
+  padding: 18px 7px 0;
+  border-top: 1px solid #edf1ee;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: #246744;
+  background: #e5f1e8;
+  font-weight: 750;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-info strong {
+  color: #263b2f;
+  font-size: 12px;
+}
+
+.profile-info span {
+  color: #94a097;
+  font-size: 10px;
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    width: 76px;
+    padding: 22px 10px;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 0;
+    margin-bottom: 35px;
+  }
+
+  .brand > span:last-child,
+  .menu-label,
+  .menu a > span:last-child,
+  .profile-info {
+    display: none;
+  }
+
+  .menu a {
+    justify-content: center;
+    padding: 13px 5px;
+  }
+
+  .sidebar-bottom {
+    justify-content: center;
+    padding-inline: 0;
+  }
+}

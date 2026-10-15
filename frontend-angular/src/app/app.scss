@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: #f6f8f6;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-content {
+  padding: 28px 36px;
+}
+
+@media (max-width: 760px) {
+  .page-content {
+    padding: 20px 16px;
+  }
+}

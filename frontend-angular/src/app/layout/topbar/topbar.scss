@@ -1,0 +1,64 @@
+
+:host {
+  display: block;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 76px;
+  padding: 0 36px;
+  background: #fff;
+  border-bottom: 1px solid #e8eee9;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #93a097;
+  font-size: 13px;
+}
+
+.breadcrumb strong {
+  color: #263b2f;
+  font-weight: 650;
+}
+
+.separator {
+  color: #c1cbc4;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.today-label {
+  color: #738077;
+  font-size: 12px;
+}
+
+.topbar-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5f1e8;
+  color: #246744;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .today-label {
+    display: none;
+  }
+}

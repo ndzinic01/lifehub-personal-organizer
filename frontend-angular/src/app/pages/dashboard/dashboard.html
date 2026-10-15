@@ -1,0 +1,119 @@
+<section class="dashboard">
+  <div class="welcome">
+    <div>
+      <p class="eyebrow">YOUR PERSONAL ORGANIZER</p>
+      <h1>Good to see you!</h1>
+      <p class="subtitle">Organize your day, focus on what matters.</p>
+    </div>
+
+    <a class="primary-button" routerLink="/tasks">
+      <span>+</span> View my tasks
+    </a>
+  </div>
+
+  @if (loading) {
+    <p class="subtitle">Loading your tasks...</p>
+  } @else if (errorMessage) {
+    <p class="subtitle">{{ errorMessage }}</p>
+  } @else {
+    <div class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Total tasks</span>
+          <span class="stat-icon">▤</span>
+        </div>
+        <div class="stat-value">{{ tasks.length }}</div>
+        <p>All your tasks</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">In progress</span>
+          <span class="stat-icon">◷</span>
+        </div>
+        <div class="stat-value">{{ inProgressCount }}</div>
+        <p>Keep it going</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Completed</span>
+          <span class="stat-icon">✓</span>
+        </div>
+        <div class="stat-value">{{ completedCount }}</div>
+        <p>Great progress</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Overdue</span>
+          <span class="stat-icon">!</span>
+        </div>
+        <div class="stat-value">{{ overdueCount }}</div>
+        <p>Needs attention</p>
+      </article>
+    </div>
+
+    <div class="content-grid">
+      <section class="panel tasks-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Today's focus</h2>
+            <p>Tasks due today that are not completed.</p>
+          </div>
+          <a routerLink="/tasks">All tasks →</a>
+        </div>
+
+        @if (todayTasks.length > 0) {
+          <div class="today-task-list">
+            @for (task of todayTasks; track task.id) {
+              <article class="today-task">
+                <div>
+                  <h3>{{ task.title }}</h3>
+                  <p>{{ task.description || 'No description' }}</p>
+                </div>
+                <span>{{ task.dueDate | date: 'shortTime' }}</span>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <div class="empty-icon">✓</div>
+            <h3>No tasks due today</h3>
+            <p>Your tasks due today will appear here.</p>
+            <a routerLink="/tasks" class="secondary-button">Explore tasks</a>
+          </div>
+        }
+      </section>
+
+      <section class="panel progress-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Your progress</h2>
+            <p>Completed tasks out of all your tasks.</p>
+          </div>
+        </div>
+
+        <div
+          class="progress-circle"
+          [style.background]="
+            'conic-gradient(#328158 0% ' +
+            completionPercentage +
+            '%, #eaf1eb ' +
+            completionPercentage +
+            '% 100%)'
+          "
+        >
+          <div>
+            <strong>{{ completionPercentage }}%</strong>
+            <span>completed</span>
+          </div>
+        </div>
+
+        <p class="progress-caption">
+          {{ completedCount }} of {{ tasks.length }} tasks completed.
+        </p>
+      </section>
+    </div>
+  }
+</section>

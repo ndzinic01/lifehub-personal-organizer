@@ -1,0 +1,30 @@
+<aside class="sidebar">
+  <a routerLink="/" class="brand">
+    <span class="brand-icon">L</span>
+    <span>LifeHub</span>
+  </a>
+
+  <p class="menu-label">WORKSPACE</p>
+
+  <nav class="menu">
+    <a routerLink="/" routerLinkActive="active"
+    [routerLinkActiveOptions]="{exact: true}">
+      <span class="menu-icon">⌂</span>
+      <span>Dashboard</span>
+    </a>
+
+    <a routerLink="/tasks" routerLinkActive="active">
+      <span class="menu-icon">✓</span>
+      <span>My Tasks</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="profile-avatar">U</div>
+    <div class="profile-info">
+      <strong>LifeHub User</strong>
+      <span>Personal workspace</span>
+    </div>
+  </div>
+
+</aside>
