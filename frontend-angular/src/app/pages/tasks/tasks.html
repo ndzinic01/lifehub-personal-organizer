@@ -1,1 +1,54 @@
-<p>tasks works!</p>
+<section class="tasks-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">YOUR PERSONAL ORGANIZER</p>
+      <h1>My Tasks</h1>
+      <p class="subtitle">Keep track of what you need to get done.</p>
+    </div>
+
+    <button class="primary-button" type="button" (click)="loadTasks()">
+      Refresh tasks
+    </button>
+  </header>
+
+  @if (loading) {
+    <p class="state-message">Loading tasks...</p>
+  } @else if (errorMessage) {
+    <p class="state-message error-message">{{ errorMessage }}</p>
+  } @else if (tasks.length === 0) {
+    <section class="empty-state">
+      <h2>No tasks yet</h2>
+      <p>When you add tasks, they will appear here.</p>
+    </section>
+  } @else {
+    <p class="task-count">
+      {{ tasks.length }} {{ tasks.length === 1 ? 'task' : 'tasks' }}
+    </p>
+
+    <div class="task-list">
+      @for (task of tasks; track task.id) {
+        <article class="task-card">
+          <div class="task-main">
+            <h2>{{ task.title }}</h2>
+
+            @if (task.description) {
+              <p class="task-description">{{ task.description }}</p>
+            }
+
+            <p class="task-due">
+              Due:
+              {{ task.dueDate ? (task.dueDate | date: 'medium') : 'No due date' }}
+            </p>
+          </div>
+
+          <div class="task-labels">
+            <span class="task-label">{{ getStatusLabel(task.status) }}</span>
+            <span class="task-label priority">
+              {{ getPriorityLabel(task.priority) }} priority
+            </span>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
