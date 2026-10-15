@@ -34,6 +34,8 @@ export class Tasks implements OnInit {
   editingTaskId: number | null = null;
   deletingTaskId: number | null = null;
   errorMessage = '';
+  filterStatus: TaskStatus | 'all' = 'all';
+  filterPriority: TaskPriority | 'all' = 'all';
 
   newTask: CreateTaskDto = this.createEmptyTask();
 
@@ -52,15 +54,14 @@ export class Tasks implements OnInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.errorMessage =
-          'Could not load tasks. Check that the backend is running.';
+        this.errorMessage = 'Could not load tasks. Check that the backend is running.';
         this.loading = false;
         this.cdr.markForCheck();
       },
     });
   }
   saveTask(form: NgForm): void {
-    if(form.invalid || this.saving) {
+    if (form.invalid || this.saving) {
       return;
     }
 
@@ -73,7 +74,7 @@ export class Tasks implements OnInit {
       description: this.newTask.description?.trim() || null,
       dueDate: this.newTask.dueDate || null,
     };
-    if(this.editingTaskId === null){
+    if (this.editingTaskId === null) {
       this.taskService.createTask(taskToSave).subscribe({
         next: (createTask) => {
           this.tasks = [createTask, ...this.tasks];
@@ -94,14 +95,14 @@ export class Tasks implements OnInit {
     this.taskService.updateTask(taskId, taskToSave).subscribe({
       next: () => {
         this.tasks = this.tasks.map((task) =>
-        task.id === taskId
-          ? {
-          ...task,
-          ...taskToSave,
-          description: taskToSave.description ?? null,
-          }
-          : task,
-          );
+          task.id === taskId
+            ? {
+                ...task,
+                ...taskToSave,
+                description: taskToSave.description ?? null,
+              }
+            : task,
+        );
         this.saving = false;
         this.resetTaskForm(form);
         this.cdr.markForCheck();
@@ -113,30 +114,29 @@ export class Tasks implements OnInit {
       },
     });
   }
-  editTask(task: TaskItem): void{
+  editTask(task: TaskItem): void {
     this.editingTaskId = task.id;
     this.errorMessage = '';
 
     this.newTask = {
       title: task.title,
       description: task.description ?? '',
-      dueDate: task.dueDate?.slice(0,10) ?? null,
+      dueDate: task.dueDate?.slice(0, 10) ?? null,
       priority: task.priority,
       status: task.status,
     };
   }
 
-  cancelEdit(form: NgForm): void{
+  cancelEdit(form: NgForm): void {
     this.resetTaskForm(form);
     this.errorMessage = '';
   }
 
-  private resetTaskForm(form: NgForm): void{
+  private resetTaskForm(form: NgForm): void {
     this.editingTaskId = null;
     this.newTask = this.createEmptyTask();
     form.resetForm(this.newTask);
   }
-
 
   getStatusLabel(status: TaskStatus): string {
     switch (status) {
@@ -177,7 +177,7 @@ export class Tasks implements OnInit {
   deleteTask(task: TaskItem): void {
     const confirmed = window.confirm(`Delete "${task.title}"?`);
 
-    if(!confirmed) {
+    if (!confirmed) {
       return;
     }
 
@@ -186,8 +186,7 @@ export class Tasks implements OnInit {
 
     this.taskService.deleteTask(task.id).subscribe({
       next: () => {
-        this.tasks = this.tasks.filter((item) =>
-        item.id !== task.id);
+        this.tasks = this.tasks.filter((item) => item.id !== task.id);
         this.deletingTaskId = null;
         this.cdr.markForCheck();
       },
@@ -196,6 +195,16 @@ export class Tasks implements OnInit {
         this.deletingTaskId = null;
         this.cdr.markForCheck();
       },
+    });
+  }
+  get filteredTasks(): TaskItem[] {
+    return this.tasks.filter((task) => {
+      const matchesStatus = this.filterStatus === 'all' || task.status === this.filterStatus;
+
+      const matchesPriority =
+        this.filterPriority === 'all' || task.priority === this.filterPriority;
+
+      return matchesStatus && matchesPriority;
     });
   }
 }

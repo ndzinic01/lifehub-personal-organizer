@@ -84,6 +84,7 @@
                 : 'Save changes'
           }}
         </button>
+
         @if (editingTaskId !== null) {
           <button
             class="secondary-button"
@@ -109,51 +110,97 @@
       <p>Add your first task using the form above.</p>
     </section>
   } @else {
+    <section class="filter-panel">
+      <div class="form-field">
+        <label for="filterStatus">Filter by status</label>
+        <select
+          id="filterStatus"
+          name="filterStatus"
+          [(ngModel)]="filterStatus"
+        >
+          <option [ngValue]="'all'">All statuses</option>
+          <option [ngValue]="TaskStatus.Pending">Pending</option>
+          <option [ngValue]="TaskStatus.InProgress">In progress</option>
+          <option [ngValue]="TaskStatus.Completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="filterPriority">Filter by priority</label>
+        <select
+          id="filterPriority"
+          name="filterPriority"
+          [(ngModel)]="filterPriority"
+        >
+          <option [ngValue]="'all'">All priorities</option>
+          <option [ngValue]="TaskPriority.Low">Low</option>
+          <option [ngValue]="TaskPriority.Medium">Medium</option>
+          <option [ngValue]="TaskPriority.High">High</option>
+        </select>
+      </div>
+    </section>
+
     <p class="task-count">
-      {{ tasks.length }} {{ tasks.length === 1 ? 'task' : 'tasks' }}
+      Showing {{ filteredTasks.length }} of {{ tasks.length }} tasks
     </p>
 
-    <div class="task-list">
-      @for (task of tasks; track task.id) {
-        <article class="task-card">
-          <div class="task-main">
-            <h2>{{ task.title }}</h2>
+    @if (filteredTasks.length === 0) {
+      <section class="empty-state">
+        <h2>No matching tasks</h2>
+        <p>Try changing one or both filters.</p>
+      </section>
+    } @else {
+      <div class="task-list">
+        @for (task of filteredTasks; track task.id) {
+          <article class="task-card">
+            <div class="task-main">
+              <h2>{{ task.title }}</h2>
 
-            @if (task.description) {
-              <p class="task-description">{{ task.description }}</p>
-            }
+              @if (task.description) {
+                <p class="task-description">{{ task.description }}</p>
+              }
 
-            <p class="task-due">
-              Due:
-              {{ task.dueDate ? (task.dueDate | date: 'mediumDate') : 'No due date' }}
-            </p>
-          </div>
-
-          <div class="task-actions">
-            <div class="task-labels">
-              <span class="task-label">{{ getStatusLabel(task.status) }}</span>
-              <span class="task-label priority">
-      {{ getPriorityLabel(task.priority) }} priority
-    </span>
+              <p class="task-due">
+                Due:
+                {{
+                  task.dueDate
+                    ? (task.dueDate | date: 'mediumDate')
+                    : 'No due date'
+                }}
+              </p>
             </div>
-            <button
-              class="edit-button"
-              type="button"
-              (click)="editTask(task)"
-            >
-              Edit
-            </button>
-            <button
-              class="delete-button"
-              type="button"
-              [disabled]="deletingTaskId === task.id"
-              (click)="deleteTask(task)"
-            >
-              {{ deletingTaskId === task.id ? 'Deleting...' : 'Delete' }}
-            </button>
-          </div>
-        </article>
-      }
-    </div>
+
+            <div class="task-actions">
+              <div class="task-labels">
+                <span class="task-label">
+                  {{ getStatusLabel(task.status) }}
+                </span>
+
+                <span class="task-label priority">
+                  {{ getPriorityLabel(task.priority) }} priority
+                </span>
+              </div>
+
+              <button
+                class="edit-button"
+                type="button"
+                (click)="editTask(task)"
+              >
+                Edit
+              </button>
+
+              <button
+                class="delete-button"
+                type="button"
+                [disabled]="deletingTaskId === task.id"
+                (click)="deleteTask(task)"
+              >
+                {{ deletingTaskId === task.id ? 'Deleting...' : 'Delete' }}
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
   }
 </section>

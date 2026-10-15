@@ -287,3 +287,30 @@ h1 {
 .edit-button:hover {
   background: #eaf4ed;
 }
+.filter-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 16px;
+  margin: 22px 0 12px;
+  padding: 18px;
+  border: 1px solid #e8eee9;
+  border-radius: 12px;
+  background: white;
+}
+
+.filter-panel select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #dce5de;
+  border-radius: 8px;
+  color: #263b2f;
+  background: white;
+  font: inherit;
+}
+
+@media (max-width: 600px) {
+  .filter-panel {
+    grid-template-columns: 1fr;
+  }
+}
