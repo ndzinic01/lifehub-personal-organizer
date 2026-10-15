@@ -146,3 +146,98 @@ h1 {
     justify-content: flex-start;
   }
 }
+.create-panel {
+  margin-bottom: 26px;
+  padding: 22px;
+  border: 1px solid #e8eee9;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 3px 12px rgb(29 63 42 / 3%);
+}
+
+.create-panel h2 {
+  margin: 0 0 18px;
+  color: #263b2f;
+  font-size: 18px;
+}
+
+.create-panel form {
+  display: grid;
+  gap: 10px;
+}
+
+.create-panel label {
+  color: #526258;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.create-panel input,
+.create-panel textarea,
+.create-panel select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #dce5de;
+  border-radius: 8px;
+  color: #263b2f;
+  background: white;
+  font: inherit;
+}
+
+.create-panel textarea {
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 6px 0;
+}
+
+.form-field {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.primary-button,
+.secondary-button {
+  width: fit-content;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.primary-button {
+  color: white;
+  background: #287650;
+}
+
+.primary-button:hover {
+  background: #205e3e;
+}
+
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.secondary-button {
+  color: #287650;
+  background: #eaf4ed;
+}
+
+.error-message {
+  color: #b42318;
+}
+
+@media (max-width: 650px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

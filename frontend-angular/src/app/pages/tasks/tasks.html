@@ -6,19 +6,90 @@
       <p class="subtitle">Keep track of what you need to get done.</p>
     </div>
 
-    <button class="primary-button" type="button" (click)="loadTasks()">
+    <button class="secondary-button" type="button" (click)="loadTasks()">
       Refresh tasks
     </button>
   </header>
 
+  <section class="create-panel">
+    <h2>Add a task</h2>
+
+    <form #taskForm="ngForm" (ngSubmit)="createTask(taskForm)">
+      <label for="title">Title</label>
+      <input
+        id="title"
+        name="title"
+        type="text"
+        [(ngModel)]="newTask.title"
+        required
+        maxlength="100"
+        placeholder="What do you need to do?"
+      />
+
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        [(ngModel)]="newTask.description"
+        maxlength="1000"
+        rows="3"
+        placeholder="Add some details (optional)"
+      ></textarea>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="dueDate">Due date</label>
+          <input
+            id="dueDate"
+            name="dueDate"
+            type="date"
+            [(ngModel)]="newTask.dueDate"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="priority">Priority</label>
+          <select
+            id="priority"
+            name="priority"
+            [(ngModel)]="newTask.priority"
+          >
+            <option [ngValue]="TaskPriority.Low">Low</option>
+            <option [ngValue]="TaskPriority.Medium">Medium</option>
+            <option [ngValue]="TaskPriority.High">High</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="status">Status</label>
+          <select id="status" name="status" [(ngModel)]="newTask.status">
+            <option [ngValue]="TaskStatus.Pending">Pending</option>
+            <option [ngValue]="TaskStatus.InProgress">In progress</option>
+            <option [ngValue]="TaskStatus.Completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <button
+        class="primary-button"
+        type="submit"
+        [disabled]="taskForm.invalid || creating"
+      >
+        {{ creating ? 'Adding...' : 'Add task' }}
+      </button>
+    </form>
+  </section>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
   @if (loading) {
     <p class="state-message">Loading tasks...</p>
-  } @else if (errorMessage) {
-    <p class="state-message error-message">{{ errorMessage }}</p>
   } @else if (tasks.length === 0) {
     <section class="empty-state">
       <h2>No tasks yet</h2>
-      <p>When you add tasks, they will appear here.</p>
+      <p>Add your first task using the form above.</p>
     </section>
   } @else {
     <p class="task-count">
@@ -37,7 +108,7 @@
 
             <p class="task-due">
               Due:
-              {{ task.dueDate ? (task.dueDate | date: 'medium') : 'No due date' }}
+              {{ task.dueDate ? (task.dueDate | date: 'mediumDate') : 'No due date' }}
             </p>
           </div>
 
