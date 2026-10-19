@@ -78,6 +78,38 @@
         <p class="error-message">{{ budgetErrorMessage }}</p>
       }
     </section>
+    <section class="budget-panel category-panel">
+      <h2>Expenses by category</h2>
+      <p class="category-subtitle">Breakdown for this month</p>
+
+      @if (expenseCategoryBreakdown.length === 0) {
+        <p class="state-message">No expenses recorded this month.</p>
+      } @else {
+        <div class="category-list">
+          @for (item of expenseCategoryBreakdown; track item.categoryName) {
+            <div class="category-row">
+              <span class="category-name">{{ item.categoryName }}</span>
+
+              <div
+                class="category-bar"
+                role="progressbar"
+                [attr.aria-valuenow]="item.percentage"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                [attr.aria-label]="item.categoryName + ' share of expenses'"
+              >
+                <div
+                  class="category-bar-fill"
+                  [style.width.%]="item.percentage"
+                ></div>
+              </div>
+
+              <strong>{{ item.amount | number: '1.2-2' }} KM</strong>
+            </div>
+          }
+        </div>
+      }
+    </section>
     <section class="create-panel">
       <h2>
         {{ editingTransactionId === null ? 'Add a transaction' : 'Edit transaction' }}

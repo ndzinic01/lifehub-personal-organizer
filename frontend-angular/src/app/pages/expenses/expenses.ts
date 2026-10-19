@@ -257,5 +257,41 @@ export class Expenses implements OnInit {
         },
       });
   }
+
+  get expenseCategoryBreakdown(): {
+    categoryName: string;
+    amount: number;
+    percentage: number;
+  }[] {
+    const currentMonth = `${this.budgetYear}-${String(this.budgetMonth).padStart(2,'0')}`;
+
+    const totals = new Map<string, number>();
+
+    for(const transaction of this.transactions) {
+      const isCurrentMonth =
+        transaction.date.slice(0,7) === currentMonth;
+      const isExpense = transaction.type === TransactionType.Expense;
+
+      if(isCurrentMonth && isExpense){
+        const currentTotal = totals.get(transaction.categoryName) ?? 0;
+        totals.set(
+          transaction.categoryName,
+          currentTotal + transaction.amount,
+        );
+      }
+    }
+    const totalExpenses = Array.from(totals.values()).reduce(
+      (total, amount) =>  total + amount,
+      0
+    );
+
+    return Array.from(totals.entries())
+      .map(([categoryName, amount]) => ({
+        categoryName,
+        amount,
+        percentage: totalExpenses > 0 ? (amount/totalExpenses)*100:0,
+      })).sort((first, second) => second.amount - first.amount);
+  }
+
 }
 
