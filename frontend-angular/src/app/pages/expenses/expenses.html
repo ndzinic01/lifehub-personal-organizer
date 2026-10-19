@@ -1,0 +1,154 @@
+<section class="expenses-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">YOUR PERSONAL ORGANIZER</p>
+      <h1>Expenses</h1>
+      <p class="subtitle">Track your income and spending.</p>
+    </div>
+
+    <button class="secondary-button" type="button" (click)="loadData()">
+      Refresh
+    </button>
+  </header>
+
+  @if (loading) {
+    <p class="state-message">Loading transactions...</p>
+  } @else if (errorMessage && transactions.length === 0) {
+    <p class="error-message">{{ errorMessage }}</p>
+  } @else {
+    <div class="summary-grid">
+      <article class="summary-card">
+        <p>Total income</p>
+        <strong>{{ totalIncome | number: '1.2-2' }} KM</strong>
+      </article>
+
+      <article class="summary-card">
+        <p>Total expenses</p>
+        <strong>{{ totalExpenses | number: '1.2-2' }} KM</strong>
+      </article>
+
+      <article class="summary-card">
+        <p>Balance</p>
+        <strong>{{ balance | number: '1.2-2' }} KM</strong>
+      </article>
+    </div>
+
+    <section class="create-panel">
+      <h2>Add a transaction</h2>
+
+      <form
+        #transactionForm="ngForm"
+        (ngSubmit)="saveTransaction(transactionForm)"
+      >
+        <div class="form-row">
+          <div class="form-field">
+            <label for="type">Type</label>
+            <select
+              id="type"
+              name="type"
+              [(ngModel)]="newTransaction.type"
+              (ngModelChange)="onTypeChanged($event)"
+            >
+              <option [ngValue]="TransactionType.Expense">Expense</option>
+              <option [ngValue]="TransactionType.Income">Income</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="categoryId">Category</label>
+            <select
+              id="categoryId"
+              name="categoryId"
+              [(ngModel)]="newTransaction.categoryId"
+              required
+            >
+              <option [ngValue]="0" disabled>Select a category</option>
+              @for (category of filteredCategories; track category.id) {
+                <option [ngValue]="category.id">{{ category.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="amount">Amount (KM)</label>
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              [(ngModel)]="newTransaction.amount"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="date">Date</label>
+            <input
+              id="date"
+              name="date"
+              type="date"
+              [(ngModel)]="newTransaction.date"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-field description-field">
+          <label for="description">Description</label>
+          <input
+            id="description"
+            name="description"
+            type="text"
+            maxlength="500"
+            [(ngModel)]="newTransaction.description"
+            placeholder="Optional"
+          />
+        </div>
+
+        <button
+          class="primary-button"
+          type="submit"
+          [disabled]="transactionForm.invalid || newTransaction.categoryId === 0 || saving"
+        >
+          {{ saving ? 'Saving...' : 'Add transaction' }}
+        </button>
+      </form>
+    </section>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <section class="transactions-section">
+      <h2>Recent transactions</h2>
+
+      @if (transactions.length === 0) {
+        <div class="empty-state">
+          <h3>No transactions yet</h3>
+          <p>Add your first income or expense using the form above.</p>
+        </div>
+      } @else {
+        <div class="transaction-list">
+          @for (transaction of transactions; track transaction.id) {
+            <article class="transaction-card">
+              <div>
+                <h3>{{ transaction.categoryName }}</h3>
+                <p>{{ transaction.description || 'No description' }}</p>
+                <time>{{ transaction.date | date: 'mediumDate' }}</time>
+              </div>
+
+              <strong
+                [class.income]="transaction.type === TransactionType.Income"
+                [class.expense]="transaction.type === TransactionType.Expense"
+              >
+                {{ transaction.type === TransactionType.Income ? '+' : '−' }}
+                {{ transaction.amount | number: '1.2-2' }} KM
+              </strong>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>
