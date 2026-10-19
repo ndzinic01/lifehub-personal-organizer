@@ -113,6 +113,46 @@ namespace LifeHub.Controllers
                 new {id = transaction.Id},
                 response);
         }
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateTransaction(int id, [FromBody] UpdateTransactionDto dto)
+        {
+            var transaction = await _context.Transactions.FindAsync(id);
+
+            if(transaction is null)
+            {
+                return NotFound( new
+                {
+                    message = "Transakcija nije pronađena."
+                });
+            }
+
+            var category = await _context.ExpenseCategories.FindAsync(dto.CategoryId);
+
+            if(category is null)
+            {
+                return BadRequest(new
+                {
+                    message = "Kategorija nije pronađena. "
+                });
+            }
+            if (category.Type != dto.Type)
+            {
+                return BadRequest(new
+                {
+                    message = "Transakcijski tip mora biti isti kao tip kategorije. "
+                });
+            }
+
+            transaction.Amount = dto.Amount;
+            transaction.Type = dto.Type;
+            transaction.Description = dto.Description?.Trim();
+            transaction.Date = dto.Date;
+            transaction.CategoryId = dto.CategoryId;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTransaction(int id)
         {
