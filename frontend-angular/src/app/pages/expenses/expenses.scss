@@ -235,3 +235,75 @@ h1 {
   font: inherit;
   cursor: pointer;
 }
+.budget-panel {
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 1px solid #e8eee9;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 3px 12px rgb(29 63 42 / 3%);
+}
+
+.budget-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.budget-heading h2 {
+  margin: 0 0 6px;
+  color: #263b2f;
+  font-size: 18px;
+}
+
+.budget-heading p {
+  margin: 0;
+  color: #849087;
+}
+
+.budget-heading form {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.budget-heading label {
+  display: grid;
+  gap: 8px;
+  color: #526258;
+  font-size: 13px;
+}
+
+.budget-heading input {
+  box-sizing: border-box;
+  width: 160px;
+  padding: 10px 12px;
+  border: 1px solid #dce5de;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.budget-totals {
+  display: flex;
+  gap: 32px;
+  margin-top: 18px;
+  color: #758278;
+}
+
+.budget-totals p {
+  margin: 0;
+}
+
+.budget-totals strong {
+  color: #20392b;
+}
+
+@media (max-width: 600px) {
+  .budget-heading,
+  .budget-heading form,
+  .budget-totals {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

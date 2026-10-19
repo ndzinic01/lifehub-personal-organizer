@@ -32,7 +32,52 @@
         <strong>{{ balance | number: '1.2-2' }} KM</strong>
       </article>
     </div>
+    <section class="budget-panel">
+      <div class="budget-heading">
+        <div>
+          <h2>Monthly budget</h2>
+          <p>
+            {{ budgetMonth }}/{{ budgetYear }}
+          </p>
+        </div>
 
+        <form #budgetForm="ngForm" (ngSubmit)="saveMonthlyBudget()">
+          <label for="budgetAmount">Budget amount (KM)</label>
+          <input
+            id="budgetAmount"
+            name="budgetAmount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            [(ngModel)]="budgetInput"
+            required
+          />
+
+          <button
+            class="primary-button"
+            type="submit"
+            [disabled]="budgetForm.invalid || budgetSaving"
+          >
+            {{ budgetSaving ? 'Saving...' : 'Save budget' }}
+          </button>
+        </form>
+      </div>
+
+      <div class="budget-totals">
+        <p>
+          Spent this month:
+          <strong>{{ currentMonthExpenses | number: '1.2-2' }} KM</strong>
+        </p>
+        <p>
+          Remaining:
+          <strong>{{ remainingBudget | number: '1.2-2' }} KM</strong>
+        </p>
+      </div>
+
+      @if (budgetErrorMessage) {
+        <p class="error-message">{{ budgetErrorMessage }}</p>
+      }
+    </section>
     <section class="create-panel">
       <h2>
         {{ editingTransactionId === null ? 'Add a transaction' : 'Edit transaction' }}

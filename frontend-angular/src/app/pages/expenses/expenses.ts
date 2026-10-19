@@ -5,6 +5,7 @@ import {forkJoin} from 'rxjs';
 import {CreateTransactionDto,
   ExpenseCategory,
   Expense,
+  MonthlyBudgetDto,
   TransactionItem,
   TransactionType}
   from '../../services/expense';
@@ -21,6 +22,8 @@ export class Expenses implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   readonly TransactionType = TransactionType;
+  readonly budgetYear = new Date().getFullYear();
+  readonly budgetMonth = new Date().getMonth() + 1;
 
   categories: ExpenseCategory[] = [];
   transactions: TransactionItem[] = [];
@@ -31,6 +34,17 @@ export class Expenses implements OnInit {
 
   newTransaction: CreateTransactionDto = this.createEmptyTransaction();
   editingTransactionId: number | null = null;
+
+  monthlyBudget: MonthlyBudgetDto = {
+    year: this.budgetYear,
+    month: this.budgetMonth,
+    amount: 0,
+  };
+
+  budgetInput = 0;
+  budgetSaving = false;
+  budgetErrorMessage = '';
+
   ngOnInit() {
     this.loadData();
   }
@@ -64,10 +78,16 @@ export class Expenses implements OnInit {
     forkJoin({
       categories: this.expenseService.getCategories(),
       transactions: this.expenseService.getTransactions(),
+      budget: this.expenseService.getMonthlyBudget(
+        this.budgetYear,
+        this.budgetMonth,
+      ),
     }).subscribe({
       next: (data) => {
         this.categories = data.categories;
         this.transactions = data.transactions;
+        this.monthlyBudget = data.budget;
+        this.budgetInput = data.budget.amount;
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -198,6 +218,44 @@ export class Expenses implements OnInit {
   cancelEdit():void{
     this.editingTransactionId = null;
     this.newTransaction = this.createEmptyTransaction();
+  }
+
+  get currentMonthExpenses(): number {
+    const currentMonth = `${this.budgetYear}-${String(this.budgetMonth).padStart(2,'0')}`;
+
+    return this.transactions
+      .filter((transaction) => transaction.type === TransactionType.Expense
+      && transaction.date.slice(0,7) === currentMonth,
+        )
+      .reduce((total, transaction) => total + transaction.amount,0)
+  }
+
+  get remainingBudget():number{
+    return this.monthlyBudget.amount - this.currentMonthExpenses;
+  }
+
+  saveMonthlyBudget(){
+    if (this.budgetInput < 0.01 || this.budgetSaving){
+      return;
+    }
+    this.budgetSaving = true;
+    this.budgetErrorMessage = '';
+
+    this.expenseService
+      .setMonthlyBudget(this.budgetYear, this.budgetMonth, this.budgetInput)
+      .subscribe({
+        next: (budget) => {
+          this.monthlyBudget = budget;
+          this.budgetInput = budget.amount;
+          this.budgetSaving = false;
+          this.cdr.markForCheck()
+        },
+        error: () => {
+          this.budgetErrorMessage = 'Nije moguće sačuvati budžet. Pokušajte ponovo.';
+          this.budgetSaving = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 }
 

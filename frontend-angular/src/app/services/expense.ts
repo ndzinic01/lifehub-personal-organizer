@@ -31,6 +31,12 @@ export interface CreateTransactionDto {
   categoryId: number;
 }
 
+export interface MonthlyBudgetDto {
+  year: number;
+  month: number;
+  amount: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -58,5 +64,20 @@ export class Expense {
 
   updateTransaction(id:number, transaction: CreateTransactionDto,):Observable<void>{
     return this.http.put<void>(`${this.apiBaseUrl}/transactions/${id}`,transaction);
+  }
+
+  getMonthlyBudget(
+    year: number,
+    month: number,
+  ): Observable<MonthlyBudgetDto>{
+    return this.http.get<MonthlyBudgetDto>(`${this.apiBaseUrl}/budgets/${year}/${month}`,);
+  }
+
+  setMonthlyBudget(
+    year: number,
+    month: number,
+    amount: number,
+  ): Observable<MonthlyBudgetDto> {
+    return this.http.put<MonthlyBudgetDto>(`${this.apiBaseUrl}/budgets/${year}/${month}`, { amount },);
   }
 }
