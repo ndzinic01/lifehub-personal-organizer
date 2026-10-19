@@ -53,7 +53,43 @@
         <p>Needs attention</p>
       </article>
     </div>
+    <section class="finance-overview">
+      <div class="finance-heading">
+        <div>
+          <h2>This month's finances</h2>
+          <p>{{ budgetMonth }}/{{ budgetYear }}</p>
+        </div>
+        <a routerLink="/expenses">View expenses →</a>
+      </div>
 
+      @if (financeLoading) {
+        <p class="subtitle">Loading financial overview...</p>
+      } @else if (financeErrorMessage) {
+        <p class="subtitle">{{ financeErrorMessage }}</p>
+      } @else {
+        <div class="finance-grid">
+          <article class="finance-card">
+            <p>Income</p>
+            <strong>{{ monthlyIncome | number: '1.2-2' }} KM</strong>
+          </article>
+
+          <article class="finance-card">
+            <p>Expenses</p>
+            <strong>{{ monthlyExpenses | number: '1.2-2' }} KM</strong>
+          </article>
+
+          <article class="finance-card">
+            <p>Monthly budget</p>
+            <strong>{{ monthlyBudget.amount | number: '1.2-2' }} KM</strong>
+          </article>
+
+          <article class="finance-card">
+            <p>Remaining budget</p>
+            <strong>{{ remainingBudget | number: '1.2-2' }} KM</strong>
+          </article>
+        </div>
+      }
+    </section>
     <div class="content-grid">
       <section class="panel tasks-panel">
         <div class="panel-heading">
