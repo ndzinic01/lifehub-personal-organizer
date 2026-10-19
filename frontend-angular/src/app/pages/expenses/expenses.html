@@ -34,7 +34,9 @@
     </div>
 
     <section class="create-panel">
-      <h2>Add a transaction</h2>
+      <h2>
+        {{ editingTransactionId === null ? 'Add a transaction' : 'Edit transaction' }}
+      </h2>
 
       <form
         #transactionForm="ngForm"
@@ -111,8 +113,24 @@
           type="submit"
           [disabled]="transactionForm.invalid || newTransaction.categoryId === 0 || saving"
         >
-          {{ saving ? 'Saving...' : 'Add transaction' }}
+          {{
+            saving
+              ? 'Saving...'
+              : editingTransactionId === null
+                ? 'Add transaction'
+                : 'Save changes'
+          }}
         </button>
+
+        @if (editingTransactionId !== null) {
+          <button
+            class="secondary-button"
+            type="button"
+            (click)="cancelEdit()"
+          >
+            Cancel
+          </button>
+        }
       </form>
     </section>
 
@@ -145,13 +163,22 @@
                 {{ transaction.type === TransactionType.Income ? '+' : '−' }}
                 {{ transaction.amount | number: '1.2-2' }} KM
               </strong>
-              <button
-                class="delete-button"
-                type="button"
-                (click)="deleteTransaction(transaction.id)"
-              >
-                Delete
-              </button>
+              <div class="transaction-actions">
+                <button
+                  class="secondary-button"
+                  type="button"
+                  (click)="editTransaction(transaction)"
+                >
+                  Edit
+                </button>
+                <button
+                  class="delete-button"
+                  type="button"
+                  (click)="deleteTransaction(transaction.id)"
+                >
+                  Delete
+                </button>
+              </div>
             </article>
           }
         </div>

@@ -30,7 +30,7 @@ export class Expenses implements OnInit {
   errorMessage = '';
 
   newTransaction: CreateTransactionDto = this.createEmptyTransaction();
-
+  editingTransactionId: number | null = null;
   ngOnInit() {
     this.loadData();
   }
@@ -105,6 +105,39 @@ export class Expenses implements OnInit {
       date: `${this.newTransaction.date}T00:00:00`,
     };
 
+    if (this.editingTransactionId !== null) {
+      const id = this.editingTransactionId;
+
+      this.expenseService.updateTransaction(id, transactionToSave).subscribe({
+        next: () => {
+          const categoryName = this.categories.find(
+            (category) => category.id === transactionToSave.categoryId,
+          )?.name ?? '';
+
+          this.transactions = this.transactions.map((transaction) =>
+            transaction.id === id
+              ? {
+                  ...transaction,
+                  ...transactionToSave,
+                  categoryName,
+                }
+              : transaction,
+          );
+
+          this.saving = false;
+          this.cancelEdit();
+          form.resetForm(this.newTransaction);
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.errorMessage = 'Nije moguće izmijeniti transakciju. Pokušajte ponovo. ';
+          this.saving = false;
+          this.cdr.markForCheck();
+        },
+      });
+      return;
+    }
+
     this.expenseService.createTransaction(transactionToSave).subscribe({
       next: (transaction) => {
         this.transactions = [transaction, ...this.transactions];
@@ -114,7 +147,7 @@ export class Expenses implements OnInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.errorMessage = 'Nije moguće sačuvati transakciju. Molim vas pokušajte ponovo.';
+        this.errorMessage = 'Nije moguće sačuvati transakciju. Pokušajte ponovo.';
         this.saving = false;
         this.cdr.markForCheck();
       },
@@ -149,6 +182,22 @@ export class Expenses implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+  editTransaction(transaction: TransactionItem){
+    this.editingTransactionId = transaction.id;
+
+    this.newTransaction = {
+      amount: transaction.amount,
+      type: transaction.type,
+      description: transaction.description ?? '',
+      date: transaction.date.substring(0,10),
+      categoryId: transaction.categoryId,
+    };
+  }
+
+  cancelEdit():void{
+    this.editingTransactionId = null;
+    this.newTransaction = this.createEmptyTransaction();
   }
 }
 
