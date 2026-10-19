@@ -130,5 +130,25 @@ export class Expenses implements OnInit {
       categoryId: 0,
     };
   }
+  deleteTransaction(id: number):void{
+    const confirmed = window.confirm('Želiš li obbrisati ovu transakciju?');
+    if (!confirmed){
+      return;
+    }
+    this.errorMessage = '';
+
+    this.expenseService.deleteTransaction(id).subscribe({
+      next: () => {
+        this.transactions = this.transactions.filter(
+          (transaction) => transaction.id !== id,
+        );
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.errorMessage = 'Nije moguće obrisati ovu transakciju. Pokušajte ponovo';
+        this.cdr.markForCheck();
+      },
+    });
+  }
 }
 

@@ -51,4 +51,8 @@ export class Expense {
     transaction: CreateTransactionDto,): Observable<TransactionItem>{
     return this.http.post<TransactionItem>(`${this.apiBaseUrl}/transactions`,transaction);
   }
+
+  deleteTransaction(id:number):Observable<void>{
+    return this.http.delete<void>(`${this.apiBaseUrl}/transactions/${id}`);
+  }
 }

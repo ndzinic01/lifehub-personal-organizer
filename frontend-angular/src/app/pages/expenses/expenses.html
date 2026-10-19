@@ -145,6 +145,13 @@
                 {{ transaction.type === TransactionType.Income ? '+' : '−' }}
                 {{ transaction.amount | number: '1.2-2' }} KM
               </strong>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="deleteTransaction(transaction.id)"
+              >
+                Delete
+              </button>
             </article>
           }
         </div>
