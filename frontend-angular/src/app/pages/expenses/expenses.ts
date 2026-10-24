@@ -22,8 +22,8 @@ export class Expenses implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   readonly TransactionType = TransactionType;
-  readonly budgetYear = new Date().getFullYear();
-  readonly budgetMonth = new Date().getMonth() + 1;
+  budgetYear = new Date().getFullYear();
+  budgetMonth = new Date().getMonth() + 1;
 
   categories: ExpenseCategory[] = [];
   transactions: TransactionItem[] = [];
@@ -57,13 +57,17 @@ export class Expenses implements OnInit {
 
   get totalIncome():number {
     return this.transactions
-      .filter((transaction) => transaction.type === TransactionType.Income,)
+      .filter((transaction) =>
+        transaction.type === TransactionType.Income &&
+      transaction.date.slice(0,7) === this.currentMonthKey)
       .reduce((total, transaction) => total + transaction.amount, 0);
   }
 
   get totalExpenses(): number {
     return this.transactions
-      .filter( (transaction) => transaction.type === TransactionType.Expense,)
+      .filter( (transaction) =>
+        transaction.type === TransactionType.Expense &&
+      transaction.date.slice(0,7) === this.currentMonthKey)
       .reduce((total, transaction) => total + transaction.amount, 0);
   }
 
@@ -221,11 +225,9 @@ export class Expenses implements OnInit {
   }
 
   get currentMonthExpenses(): number {
-    const currentMonth = `${this.budgetYear}-${String(this.budgetMonth).padStart(2,'0')}`;
-
     return this.transactions
       .filter((transaction) => transaction.type === TransactionType.Expense
-      && transaction.date.slice(0,7) === currentMonth,
+      && transaction.date.slice(0,7) === this.currentMonthKey,
         )
       .reduce((total, transaction) => total + transaction.amount,0)
   }
@@ -263,13 +265,12 @@ export class Expenses implements OnInit {
     amount: number;
     percentage: number;
   }[] {
-    const currentMonth = `${this.budgetYear}-${String(this.budgetMonth).padStart(2,'0')}`;
 
     const totals = new Map<string, number>();
 
     for(const transaction of this.transactions) {
       const isCurrentMonth =
-        transaction.date.slice(0,7) === currentMonth;
+        transaction.date.slice(0,7) === this.currentMonthKey;
       const isExpense = transaction.type === TransactionType.Expense;
 
       if(isCurrentMonth && isExpense){
@@ -291,6 +292,39 @@ export class Expenses implements OnInit {
         amount,
         percentage: totalExpenses > 0 ? (amount/totalExpenses)*100:0,
       })).sort((first, second) => second.amount - first.amount);
+  }
+
+  private get currentMonthKey(): string {
+    return `${this.budgetYear}-${String(this.budgetMonth).padStart(2,'0')}`;
+  }
+
+  get selectedMonthLabel(): string {
+    return new Date(this.budgetYear, this.budgetMonth -1, 1)
+      .toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+  }
+
+  get isCurrentBudgetMonth(): boolean {
+    const now = new Date();
+
+    return this.budgetYear === now.getFullYear() &&
+      this.budgetMonth === now.getMonth() +1;
+  }
+
+  changeBudgetMonth(offset: number): void {
+    const nextMonth = new Date(
+      this.budgetYear, this.budgetMonth -1 + offset,
+      1,
+    );
+    this.budgetYear = nextMonth.getFullYear();
+    this.budgetMonth = nextMonth.getMonth() + 1;
+    this.loadData();
+  }
+
+  get transactionsForSelectedMonth(): TransactionItem[]{
+    return this.transactions.filter(
+      (transaction) =>
+        transaction.date.slice(0,7) === this.currentMonthKey,
+    );
   }
 
 }

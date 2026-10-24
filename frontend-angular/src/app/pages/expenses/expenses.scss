@@ -366,3 +366,36 @@ h1 {
     grid-row: 2;
   }
 }
+.budget-month-navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  color: #526258;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.month-button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dce5de;
+  border-radius: 8px;
+  color: #287650;
+  background: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.month-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+@media (max-width: 600px) {
+  .budget-month-navigation {
+    margin-bottom: 8px;
+  }
+}

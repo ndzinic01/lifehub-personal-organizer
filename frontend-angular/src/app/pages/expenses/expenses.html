@@ -18,27 +18,48 @@
   } @else {
     <div class="summary-grid">
       <article class="summary-card">
-        <p>Total income</p>
+        <p>Income this month</p>
         <strong>{{ totalIncome | number: '1.2-2' }} KM</strong>
       </article>
 
       <article class="summary-card">
-        <p>Total expenses</p>
+        <p>Expenses this month</p>
         <strong>{{ totalExpenses | number: '1.2-2' }} KM</strong>
       </article>
 
       <article class="summary-card">
-        <p>Balance</p>
+        <p>Balance this month</p>
         <strong>{{ balance | number: '1.2-2' }} KM</strong>
       </article>
     </div>
+
     <section class="budget-panel">
       <div class="budget-heading">
         <div>
           <h2>Monthly budget</h2>
-          <p>
-            {{ budgetMonth }}/{{ budgetYear }}
-          </p>
+
+          <div class="budget-month-navigation">
+            <button
+              class="month-button"
+              type="button"
+              aria-label="Previous month"
+              (click)="changeBudgetMonth(-1)"
+            >
+              ‹
+            </button>
+
+            <span>{{ selectedMonthLabel }}</span>
+
+            <button
+              class="month-button"
+              type="button"
+              aria-label="Next month"
+              [disabled]="isCurrentBudgetMonth"
+              (click)="changeBudgetMonth(1)"
+            >
+              ›
+            </button>
+          </div>
         </div>
 
         <form #budgetForm="ngForm" (ngSubmit)="saveMonthlyBudget()">
@@ -68,6 +89,7 @@
           Spent this month:
           <strong>{{ currentMonthExpenses | number: '1.2-2' }} KM</strong>
         </p>
+
         <p>
           Remaining:
           <strong>{{ remainingBudget | number: '1.2-2' }} KM</strong>
@@ -78,9 +100,12 @@
         <p class="error-message">{{ budgetErrorMessage }}</p>
       }
     </section>
+
     <section class="budget-panel category-panel">
       <h2>Expenses by category</h2>
-      <p class="category-subtitle">Breakdown for this month</p>
+      <p class="category-subtitle">
+        Breakdown for {{ selectedMonthLabel }}
+      </p>
 
       @if (expenseCategoryBreakdown.length === 0) {
         <p class="state-message">No expenses recorded this month.</p>
@@ -110,9 +135,14 @@
         </div>
       }
     </section>
+
     <section class="create-panel">
       <h2>
-        {{ editingTransactionId === null ? 'Add a transaction' : 'Edit transaction' }}
+        {{
+          editingTransactionId === null
+            ? 'Add a transaction'
+            : 'Edit transaction'
+        }}
       </h2>
 
       <form
@@ -142,6 +172,7 @@
               required
             >
               <option [ngValue]="0" disabled>Select a category</option>
+
               @for (category of filteredCategories; track category.id) {
                 <option [ngValue]="category.id">{{ category.name }}</option>
               }
@@ -188,7 +219,11 @@
         <button
           class="primary-button"
           type="submit"
-          [disabled]="transactionForm.invalid || newTransaction.categoryId === 0 || saving"
+          [disabled]="
+            transactionForm.invalid ||
+            newTransaction.categoryId === 0 ||
+            saving
+          "
         >
           {{
             saving
@@ -216,16 +251,21 @@
     }
 
     <section class="transactions-section">
-      <h2>Recent transactions</h2>
+      <h2>Transactions for {{ selectedMonthLabel }}</h2>
 
-      @if (transactions.length === 0) {
+      @if (transactionsForSelectedMonth.length === 0) {
         <div class="empty-state">
-          <h3>No transactions yet</h3>
-          <p>Add your first income or expense using the form above.</p>
+          <h3>No transactions this month</h3>
+          <p>
+            Transactions for {{ selectedMonthLabel }} will appear here.
+          </p>
         </div>
       } @else {
         <div class="transaction-list">
-          @for (transaction of transactions; track transaction.id) {
+          @for (
+            transaction of transactionsForSelectedMonth;
+            track transaction.id
+            ) {
             <article class="transaction-card">
               <div>
                 <h3>{{ transaction.categoryName }}</h3>
@@ -240,6 +280,7 @@
                 {{ transaction.type === TransactionType.Income ? '+' : '−' }}
                 {{ transaction.amount | number: '1.2-2' }} KM
               </strong>
+
               <div class="transaction-actions">
                 <button
                   class="secondary-button"
@@ -248,6 +289,7 @@
                 >
                   Edit
                 </button>
+
                 <button
                   class="delete-button"
                   type="button"
