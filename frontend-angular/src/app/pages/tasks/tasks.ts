@@ -38,6 +38,7 @@ export class Tasks implements OnInit {
   filterPriority: TaskPriority | 'all' = 'all';
 
   newTask: CreateTaskDto = this.createEmptyTask();
+  updatingTaskId: number | null = null;
 
   ngOnInit(): void {
     this.loadTasks();
@@ -205,6 +206,33 @@ export class Tasks implements OnInit {
         this.filterPriority === 'all' || task.priority === this.filterPriority;
 
       return matchesStatus && matchesPriority;
+    });
+  }
+  toggleTaskCompletion(task: TaskItem): void {
+    const newStatus = task.status === TaskStatus.Completed ? TaskStatus.Pending : TaskStatus.Completed;
+
+    const updatedTask: CreateTaskDto = {
+      title: task.title,
+      description: task.description ?? null,
+      dueDate: task.dueDate ?? null,
+      priority: task.priority,
+      status: newStatus,
+    };
+    this.taskService.updateTask(task.id, updatedTask).subscribe({
+      next: () => {
+        this.tasks = this.tasks
+          .map((item) => item.id === task.id
+        ? { ...item, status: newStatus}
+          : item,
+        );
+        this.updatingTaskId = null;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.errorMessage = 'Nije moguće promijeniti status zadatka.';
+        this.updatingTaskId = null;
+        this.cdr.markForCheck();
+      },
     });
   }
 }

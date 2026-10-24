@@ -314,3 +314,22 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+.complete-button {
+  padding: 8px 11px;
+  border: 1px solid #dce5de;
+  border-radius: 8px;
+  color: #287650;
+  background: #eaf4ed;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.complete-button:hover {
+  background: #dceee1;
+}
+
+.complete-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

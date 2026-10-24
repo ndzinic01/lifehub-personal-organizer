@@ -180,7 +180,20 @@
                   {{ getPriorityLabel(task.priority) }} priority
                 </span>
               </div>
-
+              <button
+                class="complete-button"
+                type="button"
+                [disabled]="updatingTaskId === task.id"
+                (click)="toggleTaskCompletion(task)"
+              >
+                {{
+                  updatingTaskId === task.id
+                    ? 'Saving...'
+                    : task.status === TaskStatus.Completed
+                      ? 'Reopen'
+                      : 'Complete'
+                }}
+              </button>
               <button
                 class="edit-button"
                 type="button"
