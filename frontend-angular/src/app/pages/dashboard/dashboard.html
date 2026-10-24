@@ -151,5 +151,34 @@
         </p>
       </section>
     </div>
+    <section class="panel upcoming-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Upcoming tasks</h2>
+          <p>Tasks due in the next 7 days.</p>
+        </div>
+        <a routerLink="/tasks">All tasks →</a>
+      </div>
+
+      @if (upcomingTasks.length > 0) {
+        <div class="upcoming-task-list">
+          @for (task of upcomingTasks; track task.id) {
+            <article class="upcoming-task">
+              <div>
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description || 'No description' }}</p>
+              </div>
+
+              <time>{{ task.dueDate | date: 'mediumDate' }}</time>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="upcoming-empty">
+          <h3>No upcoming tasks</h3>
+          <p>You have no open tasks due in the next 7 days.</p>
+        </div>
+      }
+    </section>
   }
 </section>

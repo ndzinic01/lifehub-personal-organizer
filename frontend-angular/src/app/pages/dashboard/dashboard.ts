@@ -133,4 +133,26 @@ export class Dashboard implements OnInit {
   get remainingBudget():number{
     return this.monthlyBudget.amount - this.monthlyExpenses
   }
+  get upcomingTasks(): TaskItem[] {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate()+7);
+
+    return this.tasks
+      .filter((task) => {
+        if (!task.dueDate || task.status === TaskStatus.Completed)
+        {
+          return false;
+        }
+        const dueDate = new Date(`${task.dueDate.slice(0,10)}T00:00:00`);
+
+        return dueDate > today && dueDate <= nextWeek;
+      })
+      .sort((first, second) =>
+       new Date(first.dueDate!).getTime() - new Date(second.dueDate!).getTime(),
+      ).slice(0,5);
+  }
+
 }
